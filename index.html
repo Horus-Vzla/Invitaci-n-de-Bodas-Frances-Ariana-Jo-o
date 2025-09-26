@@ -14,18 +14,23 @@
             background-color: #f4f4f4; 
             min-height: 100vh;
             overflow: auto; 
+            font-family: sans-serif;
         }
 
         .invitation-container {
-            width: 1080px; 
-            height: 1920px; 
-            /* RUTA DE LA IMAGEN CORREGIDA: */
+            /* Hacemos el contenedor responsive */
+            width: 100%;
+            max-width: 1080px;
+            /* La altura se ajusta para mantener la proporción 1080x1920 (1.77) */
+            aspect-ratio: 1080 / 1920; 
+            
             background-image: url('Tarjeta Ariana & João Frances.jpg'); 
             background-size: cover; 
             background-position: center; 
             background-repeat: no-repeat; 
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
             position: relative; 
+            overflow: hidden;
         }
 
         /* Estilos para los enlaces (hotspots) */
@@ -34,43 +39,45 @@
             background-color: rgba(255, 255, 255, 0); 
             cursor: pointer;
             z-index: 10; 
-            /* Para depuración: border: 1px solid red; */
         }
 
-        /* Posicionamiento de los iconos (coordenadas que tú definiste) */
+        /* Ahora usamos porcentajes para el posicionamiento,
+           basándonos en el tamaño del contenedor principal */
+        
         /* Icono de Ceremonia */
         .hotspot-ceremonie {
-            top: 1540px; 
-            left: 170px;  
-            width: 250px; 
-            height: 250px; 
+            top: 79.5%; /* Posición vertical */
+            left: 15.7%; /* Posición horizontal */
+            width: 23%; /* Ancho del área clicable */
+            height: 12.5%; /* Alto del área clicable */
         }
 
         /* Icono de Recepción de Boda */
         .hotspot-reception {
-            top: 1540px; 
-            left: 420px; 
-            width: 250px; 
-            height: 250px; 
+            top: 79.5%; 
+            left: 38.5%; 
+            width: 23%; 
+            height: 12.5%; 
         }
 
         /* Icono de Confirmar Presencia */
         .hotspot-confirmation {
-            top: 1540px; 
-            left: 690px; 
-            width: 250px; 
-            height: 250px; 
+            top: 79.5%; 
+            left: 61.3%; 
+            width: 23%; 
+            height: 12.5%; 
         }
     </style>
 </head>
 <body>
     
-    <!-- AUDIO: Sin autoplay, se iniciará con el primer clic del usuario -->
+    <!-- AUDIO: Se inicia con el primer clic del usuario -->
     <audio id="background-music" loop> 
         <source src="sam smith - stay with me (lyrics).mp3" type="audio/mp3">
     </audio>
 
     <div class="invitation-container">
+        <!-- Hotspots con los enlaces definitivos -->
         <a href="https://maps.app.goo.gl/XWS8NYfkEneNpyXQ9" class="hotspot hotspot-ceremonie" title="Cérémonie"></a>
         <a href="https://maps.app.goo.gl/QvWwx8subzEm66j27" class="hotspot hotspot-reception" title="Réception de Mariage"></a>
         <a href="https://forms.gle/mTm95jnBT17j9qoT9" class="hotspot hotspot-confirmation" title="Confirmer votre Présence"></a>
@@ -80,12 +87,10 @@
     <script>
         document.addEventListener('click', function() {
             var audio = document.getElementById('background-music');
-            
-            // Intenta reproducir el audio. Esto solo se ejecuta una vez.
             audio.play().catch(function(error) {
                 console.log("No se pudo reproducir el audio automáticamente, se necesita el clic del usuario.");
             });
-        }, { once: true }); // El evento solo se ejecuta una vez
+        }, { once: true });
     </script>
 </body>
 </html>
