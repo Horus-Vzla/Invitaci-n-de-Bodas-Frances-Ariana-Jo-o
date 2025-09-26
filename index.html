@@ -13,14 +13,15 @@
             padding: 0;
             background-color: #f4f4f4; 
             min-height: 100vh;
-            overflow: hidden; /* Importante para que los pétalos no creen scroll */
+            overflow: auto; 
             font-family: sans-serif;
-            position: relative;
         }
 
         .invitation-container {
+            /* Hacemos el contenedor responsive */
             width: 100%;
             max-width: 1080px;
+            /* La altura se ajusta para mantener la proporción 1080x1920 (1.77) */
             aspect-ratio: 1080 / 1920; 
             
             background-image: url('Tarjeta Ariana & João Frances.jpg'); 
@@ -40,14 +41,18 @@
             z-index: 10; 
         }
 
-        /* Posicionamiento de los iconos (coordenadas en porcentaje) */
+        /* Ahora usamos porcentajes para el posicionamiento,
+           basándonos en el tamaño del contenedor principal */
+        
+        /* Icono de Ceremonia */
         .hotspot-ceremonie {
-            top: 79.5%; 
-            left: 15.7%; 
-            width: 23%; 
-            height: 12.5%; 
+            top: 79.5%; /* Posición vertical */
+            left: 15.7%; /* Posición horizontal */
+            width: 23%; /* Ancho del área clicable */
+            height: 12.5%; /* Alto del área clicable */
         }
 
+        /* Icono de Recepción de Boda */
         .hotspot-reception {
             top: 79.5%; 
             left: 38.5%; 
@@ -55,38 +60,12 @@
             height: 12.5%; 
         }
 
+        /* Icono de Confirmar Presencia */
         .hotspot-confirmation {
             top: 79.5%; 
             left: 61.3%; 
             width: 23%; 
             height: 12.5%; 
-        }
-
-        /* Estilos para los pétalos */
-        .petal {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            pointer-events: none; /* Ignora clics para no bloquear los enlaces */
-            box-shadow: 0 0 5px rgba(255, 255, 255, 0.7); /* Efecto de luz */
-            animation-name: fall;
-            animation-timing-function: linear;
-            animation-iteration-count: infinite;
-            z-index: 1; /* Detrás de los enlaces */
-        }
-        
-        @keyframes fall {
-            0% {
-                transform: translateY(-10vh) rotate(0deg);
-                opacity: 0;
-            }
-            1% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(110vh) rotate(360deg);
-                opacity: 0;
-            }
         }
     </style>
 </head>
@@ -104,45 +83,15 @@
         <a href="https://forms.gle/mTm95jnBT17j9qoT9" class="hotspot hotspot-confirmation" title="Confirmer votre Présence"></a>
     </div>
 
-    <!-- SCRIPTS -->
+    <!-- SCRIPT: Escucha cualquier clic en el documento para iniciar la música -->
     <script>
-        // Escucha cualquier clic en el documento para iniciar la música
         document.addEventListener('click', function() {
             var audio = document.getElementById('background-music');
             audio.play().catch(function(error) {
                 console.log("No se pudo reproducir el audio automáticamente, se necesita el clic del usuario.");
             });
         }, { once: true });
-
-        // Código para la animación de los pétalos
-        document.addEventListener('DOMContentLoaded', function() {
-            const container = document.querySelector('.invitation-container');
-            const petalCount = 50; // Puedes cambiar este número para más o menos pétalos
-
-            for (let i = 0; i < petalCount; i++) {
-                const petal = document.createElement('div');
-                petal.className = 'petal';
-
-                // Posición inicial aleatoria
-                const startX = Math.random() * 100;
-                petal.style.left = startX + '%';
-
-                // Tamaño aleatorio
-                const size = Math.random() * 12 + 8; // Entre 8px y 20px
-                petal.style.width = size + 'px';
-                petal.style.height = size + 'px';
-
-                // Velocidad de caída aleatoria (más lento = más duración)
-                const duration = Math.random() * 15 + 10; // Entre 10s y 25s
-                petal.style.animationDuration = duration + 's';
-
-                // Retraso aleatorio para que no caigan todos al mismo tiempo
-                const delay = Math.random() * 10; // Entre 0s y 10s
-                petal.style.animationDelay = delay + 's';
-
-                container.appendChild(petal);
-            }
-        });
     </script>
 </body>
 </html>
+
