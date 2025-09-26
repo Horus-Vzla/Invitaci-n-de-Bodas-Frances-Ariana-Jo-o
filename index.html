@@ -15,25 +15,24 @@
             min-height: 100vh;
             overflow: auto; 
             font-family: sans-serif;
+            position: relative;
         }
 
         .invitation-container {
-            /* Hacemos el contenedor responsive */
             width: 100%;
             max-width: 1080px;
-            /* La altura se ajusta para mantener la proporción 1080x1920 (1.77) */
             aspect-ratio: 1080 / 1920; 
             
             background-image: url('Tarjeta Ariana & João Frances.jpg'); 
             background-size: cover; 
             background-position: center; 
             background-repeat: no-repeat; 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             position: relative; 
             overflow: hidden;
         }
 
-        /* Estilos para los enlaces (hotspots) */
+        /* Estilos para los enlaces (hotspots) - sin cambios */
         .hotspot {
             position: absolute;
             background-color: rgba(255, 255, 255, 0); 
@@ -41,18 +40,13 @@
             z-index: 10; 
         }
 
-        /* Ahora usamos porcentajes para el posicionamiento,
-           basándonos en el tamaño del contenedor principal */
-        
-        /* Icono de Ceremonia */
         .hotspot-ceremonie {
-            top: 79.5%; /* Posición vertical */
-            left: 15.7%; /* Posición horizontal */
-            width: 23%; /* Ancho del área clicable */
-            height: 12.5%; /* Alto del área clicable */
+            top: 79.5%; 
+            left: 15.7%; 
+            width: 23%; 
+            height: 12.5%; 
         }
 
-        /* Icono de Recepción de Boda */
         .hotspot-reception {
             top: 79.5%; 
             left: 38.5%; 
@@ -60,39 +54,224 @@
             height: 12.5%; 
         }
 
-        /* Icono de Confirmar Presencia */
         .hotspot-confirmation {
             top: 79.5%; 
             left: 61.3%; 
             width: 23%; 
             height: 12.5%; 
         }
+
+        /* --- Estilos para el Reproductor de Música Personalizado --- */
+        .custom-player {
+            position: fixed; 
+            bottom: 20px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: 90%; 
+            max-width: 400px; 
+            background-color: rgba(198, 216, 231, 0.05); /* 5% de opacidad (ultratransparente) */
+            border-radius: 10px;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 20; 
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out; 
+        }
+        
+        .custom-player.hide-player {
+            opacity: 0; 
+            pointer-events: none; 
+            transform: translate(-50%, 50px); 
+        }
+
+        .play-pause-btn {
+            background: none;
+            border: none;
+            font-size: 1.8em;
+            color: #4A6C9B; 
+            cursor: pointer;
+            padding: 0 10px;
+            outline: none;
+        }
+        
+        /* ESTILO PARA EL MENSAJE */
+        .initial-message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4A6C9B;
+            font-size: 1em;
+            font-weight: bold;
+            pointer-events: none; /* No interfiere con el botón */
+            transition: opacity 0.4s;
+        }
+        
+        .message-hidden {
+            opacity: 0;
+        }
+
+        .progress-bar-container {
+            flex-grow: 1; 
+            height: 8px;
+            background-color: rgba(74, 108, 155, 0.3); 
+            border-radius: 5px;
+            margin: 0 10px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%; 
+            background-color: #4A6C9B; 
+            border-radius: 5px;
+        }
+
+        .time-display {
+            font-size: 0.9em;
+            color: #4A6C9B; 
+            margin-left: 5px;
+            width: 80px; 
+            text-align: right;
+        }
+
+        audio {
+            display: none;
+        }
     </style>
 </head>
 <body>
     
-    <!-- AUDIO: Se inicia con el primer clic del usuario -->
     <audio id="background-music" loop> 
         <source src="sam smith - stay with me (lyrics).mp3" type="audio/mp3">
+        Tu navegador no soporta el elemento de audio.
     </audio>
 
     <div class="invitation-container">
-        <!-- Hotspots con los enlaces definitivos -->
         <a href="https://maps.app.goo.gl/XWS8NYfkEneNpyXQ9" class="hotspot hotspot-ceremonie" title="Cérémonie"></a>
         <a href="https://maps.app.goo.gl/QvWwx8subzEm66j27" class="hotspot hotspot-reception" title="Réception de Mariage"></a>
         <a href="https://forms.gle/mTm95jnBT17j9qoT9" class="hotspot hotspot-confirmation" title="Confirmer votre Présence"></a>
     </div>
 
-    <!-- SCRIPT: Escucha cualquier clic en el documento para iniciar la música -->
+    <div class="custom-player">
+        <button id="play-pause-btn" class="play-pause-btn">▶</button>
+        <div class="progress-bar-container" id="progress-container">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+        <span id="initial-message" class="initial-message">Reproduce Nuestra Canción</span>
+        <div class="time-display" id="time-display">00:00 / 00:00</div>
+    </div>
+
     <script>
-        document.addEventListener('click', function() {
-            var audio = document.getElementById('background-music');
-            audio.play().catch(function(error) {
-                console.log("No se pudo reproducir el audio automáticamente, se necesita el clic del usuario.");
+        document.addEventListener('DOMContentLoaded', function() {
+            const audio = document.getElementById('background-music');
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const progressContainer = document.getElementById('progress-container');
+            const timeDisplay = document.getElementById('time-display');
+            const playerElement = document.querySelector('.custom-player');
+            const initialMessage = document.getElementById('initial-message'); // Nuevo elemento del mensaje
+
+            let isPlaying = false;
+            let hasPlayed = false; // Bandera para controlar si ya se ha presionado Play
+            let scrollTimeout;
+            const scrollThreshold = 50; 
+
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = Math.floor(seconds % 60);
+                return `${minutes < 10 ? '0' : ''}${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+            }
+
+            // Lógica de Play/Pause
+            playPauseBtn.addEventListener('click', function() {
+                if (isPlaying) {
+                    audio.pause();
+                    playPauseBtn.textContent = '▶'; 
+                    isPlaying = false;
+                } else {
+                    // Si es la primera vez que se presiona Play, oculta el mensaje
+                    if (!hasPlayed) {
+                        initialMessage.classList.add('message-hidden');
+                        hasPlayed = true;
+                    }
+                    
+                    audio.play().then(() => {
+                        playPauseBtn.textContent = '⏸'; 
+                        isPlaying = true;
+                    }).catch(error => {
+                        console.log("La reproducción automática de audio fue bloqueada.");
+                        isPlaying = false;
+                    });
+                }
             });
-        }, { once: true });
+
+            // Oculta el mensaje al interactuar con la barra de progreso
+            progressContainer.addEventListener('click', function(e) {
+                if (!hasPlayed) {
+                    initialMessage.classList.add('message-hidden');
+                    hasPlayed = true;
+                }
+                const clickX = e.offsetX; 
+                const width = progressContainer.offsetWidth; 
+                const duration = audio.duration;
+                audio.currentTime = (clickX / width) * duration;
+                if (!isPlaying) {
+                     audio.play(); // Inicia la reproducción si el usuario salta
+                     playPauseBtn.textContent = '⏸';
+                     isPlaying = true;
+                }
+            });
+
+            // Actualizar la barra de progreso y el tiempo
+            audio.addEventListener('timeupdate', function() {
+                const progressPercent = (audio.currentTime / audio.duration) * 100;
+                progressBar.style.width = progressPercent + '%';
+                timeDisplay.textContent = `${formatTime(audio.currentTime)} / ${formatTime(audio.duration)}`;
+            });
+
+            audio.addEventListener('loadedmetadata', function() {
+                timeDisplay.textContent = `00:00 / ${formatTime(audio.duration)}`;
+            });
+
+            audio.addEventListener('ended', function() {
+                audio.currentTime = 0; 
+                audio.play(); 
+            });
+
+            // Intenta la reproducción automática y maneja el mensaje si tiene éxito
+            audio.play().then(() => {
+                playPauseBtn.textContent = '⏸';
+                isPlaying = true;
+                if (!hasPlayed) {
+                    initialMessage.classList.add('message-hidden');
+                    hasPlayed = true;
+                }
+            }).catch(error => {
+                playPauseBtn.textContent = '▶';
+                isPlaying = false;
+            });
+            
+            // Lógica de Ocultar/Mostrar al hacer Scroll
+            window.addEventListener('scroll', function() {
+                if (scrollTimeout) {
+                    clearTimeout(scrollTimeout);
+                }
+
+                scrollTimeout = setTimeout(function() {
+                    const scrollY = window.scrollY || document.documentElement.scrollTop;
+                    
+                    if (scrollY > scrollThreshold) {
+                        playerElement.classList.add('hide-player');
+                    } else {
+                        playerElement.classList.remove('hide-player');
+                    }
+                }, 100);
+            });
+            
+        });
     </script>
 </body>
 </html>
-
-
