@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación Ariana & João</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center; 
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4; 
+            min-height: 100vh;
+            overflow: auto; 
+        }
+
+        .invitation-container {
+            width: 1080px; 
+            height: 1920px; 
+            /* RUTA DE LA IMAGEN CORREGIDA: */
+            background-image: url('Tarjeta Ariana & João Frances.jpg'); 
+            background-size: cover; 
+            background-position: center; 
+            background-repeat: no-repeat; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative; 
+        }
+
+        /* Estilos para los enlaces (hotspots) */
+        .hotspot {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0); 
+            cursor: pointer;
+            z-index: 10; 
+            /* Para depuración: border: 1px solid red; */
+        }
+
+        /* Posicionamiento de los iconos (coordenadas que tú definiste) */
+        /* Icono de Ceremonia */
+        .hotspot-ceremonie {
+            top: 1540px; 
+            left: 170px;  
+            width: 250px; 
+            height: 250px; 
+        }
+
+        /* Icono de Recepción de Boda */
+        .hotspot-reception {
+            top: 1540px; 
+            left: 420px; 
+            width: 250px; 
+            height: 250px; 
+        }
+
+        /* Icono de Confirmar Presencia */
+        .hotspot-confirmation {
+            top: 1540px; 
+            left: 690px; 
+            width: 250px; 
+            height: 250px; 
+        }
+    </style>
+</head>
+<body>
+    
+    <!-- AUDIO: Sin autoplay, se iniciará con el primer clic del usuario -->
+    <audio id="background-music" loop> 
+        <source src="sam smith - stay with me (lyrics).mp3" type="audio/mp3">
+    </audio>
+
+    <div class="invitation-container">
+        <a href="https://maps.app.goo.gl/XWS8NYfkEneNpyXQ9" class="hotspot hotspot-ceremonie" title="Cérémonie"></a>
+        <a href="https://maps.app.goo.gl/QvWwx8subzEm66j27" class="hotspot hotspot-reception" title="Réception de Mariage"></a>
+        <a href="https://forms.gle/mTm95jnBT17j9qoT9" class="hotspot hotspot-confirmation" title="Confirmer votre Présence"></a>
+    </div>
+
+    <!-- SCRIPT: Escucha cualquier clic en el documento para iniciar la música -->
+    <script>
+        document.addEventListener('click', function() {
+            var audio = document.getElementById('background-music');
+            
+            // Intenta reproducir el audio. Esto solo se ejecuta una vez.
+            audio.play().catch(function(error) {
+                console.log("No se pudo reproducir el audio automáticamente, se necesita el clic del usuario.");
+            });
+        }, { once: true }); // El evento solo se ejecuta una vez
+    </script>
+</body>
+</html>
